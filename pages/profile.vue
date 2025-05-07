@@ -129,6 +129,7 @@ const saveProfile = async () => {
         if (error) throw error
 
         await loadProfileData()
+        await userStore.loadProfileData()
         showMessage('Профиль обновлён!', true)
     } catch (error) {
         showMessage('Ошибка при сохранении: ' + error.message, false)
@@ -154,6 +155,7 @@ const removeLogoFile = async () => {
 
     if(!updateError && !removeError) {
         userForm.value.image = ''
+        await userStore.loadProfileData()
         showMessage('Фото профиля удалено!', true)
     } else {
         showMessage('Произошла ошибка!', false)

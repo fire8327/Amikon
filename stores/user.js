@@ -15,7 +15,6 @@ export const useUserStore = defineStore("user", () => {
     const authenticated = useSynchronizedCookie('authenticated', false)
     const id = useSynchronizedCookie('id', null)
     const role = useSynchronizedCookie('role', null)
-    const profileCompleted = useSynchronizedCookie('profileCompleted', false);
 
     /* сообщения и роутер */
     const { showMessage } = useMessagesStore()
@@ -24,35 +23,34 @@ export const useUserStore = defineStore("user", () => {
 
     // функции для входа и выхода из аккаунта
     function login(userId, userRole, isProfileCompleted) {
-        authenticated.value = true
-        id.value = userId
-        role.value = userRole
-        profileCompleted.value = isProfileCompleted
+      authenticated.value = true
+      id.value = userId
+      role.value = userRole
     }
 
     function logout() {
-        authenticated.value = false
-        id.value = null
-        role.value = null
-        profileCompleted.value = false
-        showMessage("Успешный выход", true)
-        router.push("/")
+      authenticated.value = false
+      id.value = null
+      role.value = null
+      showMessage("Успешный выход", true)
+      router.push("/")
     }
 
-    // обновление профиля
-    async function updateProfileCompleted() {
-        const { data, error } = await supabase
-          .from('users')
-          .select('role, applicants (user_id), employers (user_id), admins (user_id)')
-          .eq('id', id.value)
-    
-        if (!error) {
-          profileCompleted.value =
-            data[0].role === 'applicant' ? !!data[0].applicants[0]?.user_id :
-            data[0].role === 'employer' ? !!data[0].employers[0]?.user_id :
-            data[0].role === 'admin' ? !!data[0].admins[0]?.user_id : false
-        }
-      }
+    // загрузка данных профиля
+    const userData = ref(null)
+    const loadProfileData = async () => {
+      if (!id.value) return
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select()
+        .eq('id', id.value)
+        .single()
+  
+      if (error) throw error
+  
+      userData.value = data || null
+    }
 
-    return { authenticated, id, role, profileCompleted, login, logout, updateProfileCompleted }
+    return { authenticated, id, role, login, logout, userData, loadProfileData }
 })

@@ -29,8 +29,8 @@
             <div class="flex items-center gap-2">
                 <NuxtLink to="/auth" class="flex items-center gap-2 transition-all duration-500 hover:opacity-70">
                     <Icon v-if="!userStore.authenticated" class="text-3xl text-violet-500" name="material-symbols:account-circle-outline"/>
-                    <img v-if="userStore.authenticated" :src="getLogoUrl(userData?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
-                    <span v-if="userStore.authenticated">{{ userData?.surname }} {{ userData?.name }}</span>
+                    <img v-if="userStore.authenticated" :src="getLogoUrl(userStore?.userData?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
+                    <span v-if="userStore.authenticated">{{ userStore?.userData?.surname }} {{ userStore?.userData?.name }}</span>
                 </NuxtLink>
             </div>
         </div>
@@ -46,26 +46,10 @@
 const { messageTitle, messageType } = storeToRefs(useMessagesStore())
 
 
-/* проверка роли */
+/* проверка роли и бд */
+const supabase = useSupabaseClient()
 const userStore = useUserStore()
 const { id:userId, role } = useUserStore()
-
-
-/* бд и получение данных */
-const supabase = useSupabaseClient()
-
-const userData = ref()
-const loadProfileData = async () => {
-    const { data, error } = await supabase
-    .from('users')
-    .select()
-    .eq('id', userId)
-    .single()
-
-    if (error) throw error
-
-    if (data) userData.value = data 
-}
 
 
 /* получение логотипа */
@@ -77,6 +61,6 @@ const getLogoUrl = (fileName) => {
 
 /* первоначальная загрузка */
 onMounted(() => {
-    loadProfileData()
+    userStore.loadProfileData()
 })
 </script>
