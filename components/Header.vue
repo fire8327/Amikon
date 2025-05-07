@@ -4,11 +4,13 @@
             <NuxtLink to="/" class="transition-all duration-500 hover:opacity-70">
                 <img src="/images/header/logo.png" alt="" class="w-40">
             </NuxtLink>
-            <div class="flex items-center gap-6">
-                <NuxtLink to="/" class="relative after:w-0 after:h-[2px] after:bg-violet-500 after:rounded-full after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:transition-all after:duration-500 hover:after:w-full">Тест</NuxtLink>
+            <NuxtLink to="/" class="relative after:w-0 after:h-[2px] after:bg-violet-500 after:rounded-full after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:transition-all after:duration-500 hover:after:w-full">Тест</NuxtLink>
+            <div class="flex items-center gap-8">
                 <div class="flex items-center gap-2">
-                    <NuxtLink to="/auth" class="flex">
-                        <Icon class="text-3xl text-violet-500" name="material-symbols:account-circle-outline"/>
+                    <NuxtLink to="/auth" class="flex items-center gap-2 transition-all duration-500 hover:opacity-70">
+                        <Icon v-if="!userStore.authenticated" class="text-3xl text-violet-500" name="material-symbols:account-circle-outline"/>
+                        <img v-if="userStore.authenticated" :src="getLogoUrl(userData?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
+                        <span v-if="userStore.authenticated">{{ userData?.surname }} {{ userData?.name }}</span>
                     </NuxtLink>
                 </div>
             </div>
@@ -27,7 +29,35 @@ const { messageTitle, messageType } = storeToRefs(useMessagesStore())
 
 /* проверка роли */
 const userStore = useUserStore()
+const { id:userId, role } = useUserStore()
 
 
 /* бд и получение данных */
+const supabase = useSupabaseClient()
+
+const userData = ref()
+const loadProfileData = async () => {
+    const { data, error } = await supabase
+    .from('users')
+    .select()
+    .eq('id', userId)
+    .single()
+
+    if (error) throw error
+
+    if (data) userData.value = data 
+}
+
+
+/* получение логотипа */
+const getLogoUrl = (fileName) => {
+    const { data } = supabase.storage.from('files/logos').getPublicUrl(fileName)
+    return data.publicUrl
+}
+
+
+/* первоначальная загрузка */
+onMounted(() => {
+    loadProfileData()
+})
 </script>

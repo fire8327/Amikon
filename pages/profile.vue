@@ -43,7 +43,7 @@ useSeoMeta({
 
 /* проверка роли и создание сообщений */
 const userStore = useUserStore()
-const { id:userId, role, updateProfileCompleted, logout } = useUserStore()
+const { id:userId, role, logout } = useUserStore()
 const { showMessage } = useMessagesStore()
 
 /* подключение БД и роутера */
