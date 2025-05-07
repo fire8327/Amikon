@@ -18,7 +18,7 @@
                 <p class="text-xl font-semibold text-[#131313]">Фото профиля</p>
                 <div class="relative w-full group rounded-xl overflow-hidden">
                     <img :src="getLogoUrl(userForm.image)" alt="" class="object-cover object-center aspect-square w-full">
-                    <button @click="removeLogoFile" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
+                    <button type="button" @click="removeLogoFile" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                     </button>
                 </div>
