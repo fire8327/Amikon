@@ -48,11 +48,12 @@ const authUser = async() => {
     .from('users')
     .select("*")
     .eq('login', user.value.login)
+    .eq('is_approved', true)
 
     if (!users[0]) {
         user.value.login = ""
         isAuthDisabled.value = false
-        return showMessage("Неверно введен логин!", false)              
+        return showMessage("Неверный логин или профиль не подтверждён!", false)              
     }
 
     if (user.value.password !== users[0].password) {
