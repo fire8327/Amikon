@@ -28,11 +28,11 @@
         </FormKit>
     </div>
     <div class="flex flex-col gap-6">
-        <p class="mainHeading">Добавление оборудования</p>
+        <p class="mainHeading">Оборудование</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="entities && entities.length > 0">
-             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="user.id">
+             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="entity.id">
                 <div class="flex items-center gap-2 self-end">
-                    <button type="button" @click="" class="cursor-pointer">
+                    <button type="button" @click="deleteEntity(entity.id, 'technic')" class="cursor-pointer">
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                     </button>
                 </div>
@@ -50,7 +50,6 @@
             <p class="text-2xl font-semibold font-mono">Вы пока ничего не опубликовали</p>
             <NuxtLink to="/profile/add-entity" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавьте оборудование</NuxtLink>
         </div>
-        {{ entities }}
     </div>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Выход из аккаунта</p>
@@ -192,13 +191,29 @@ const removeLogoFile = async () => {
 /* получение оборудования */
 const entities = ref([])
 const loadEntities = async() => {
-    const { data } = await supabase
+    const { data, error } = await supabase
     .from('technic')
     .select()
 
     if (data) {
         entities.value = data
     }
+}
+
+
+/* удаление сущности */
+const deleteEntity = async(entityId, table) => {
+    try {
+        const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq('id', entityId)
+        if (error) throw error
+        showMessage('Запись удалена!', true)
+        await loadEntities()
+    } catch (error) {
+        console.error('Ошибка обновления статуса вакансии:', error.message)
+    }   
 }
 
 
