@@ -28,6 +28,19 @@
         </FormKit>
     </div>
     <div class="flex flex-col gap-6">
+        <p class="mainHeading">Добавление оборудования</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="entities && entities.length > 0">
+            <NuxtLink to="/profile/add-entity" class="flex items-center justify-center gap-4 w-full py-6 bg-white rounded-xl shadow-lg transition-all duration-500 hover:opacity-60">
+                <Icon class="text-3xl" name="material-symbols:add-diamond-rounded"/>
+                <span>Добавить</span>
+            </NuxtLink>
+        </div>
+        <div class="flex flex-col w-full items-center gap-4 text-center" v-else>
+            <p class="text-2xl font-semibold font-mono">Вы пока ничего не опубликовали</p>
+            <NuxtLink to="/profile/add-entity" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавьте оборудование</NuxtLink>
+        </div>
+    </div>
+    <div class="flex flex-col gap-6">
         <p class="mainHeading">Выход из аккаунта</p>
         <button @click="logout" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Выйти</button>
     </div>
@@ -45,6 +58,7 @@ useSeoMeta({
 const userStore = useUserStore()
 const { id:userId, role, logout } = useUserStore()
 const { showMessage } = useMessagesStore()
+
 
 /* подключение БД и роутера */
 const supabase = useSupabaseClient()
@@ -86,7 +100,7 @@ const loadProfileData = async () => {
 
 /* получение компаний */
 const companies = ref([])
-const getCompanies = async() => {
+const loadCompanies = async() => {
     const { data } = await supabase
     .from('companies')
     .select('name')
@@ -163,9 +177,21 @@ const removeLogoFile = async () => {
 }
 
 
+/* получение оборудования */
+const entities = ref([])
+const loadEntities = async() => {
+    const { data } = await supabase
+    .from('technic')
+    .select()
+
+    entities.value = data || []
+}
+
+
 /* первоначальная загрузка */
 onMounted(async () => {
     loadProfileData()
-    getCompanies()
+    loadCompanies()
+    loadEntities()
 })
 </script>
