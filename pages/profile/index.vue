@@ -30,6 +30,17 @@
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Добавление оборудования</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="entities && entities.length > 0">
+             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="user.id">
+                <div class="flex items-center gap-2 self-end">
+                    <button type="button" @click="" class="cursor-pointer">
+                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                    </button>
+                </div>
+                <p><span class="font-semibold font-mono">Id:</span> {{ entity.id }}</p>
+                <p><span class="font-semibold font-mono">Наименование:</span> {{ entity.name }}</p>
+                <p><span class="font-semibold font-mono">Тип:</span> {{ entity.type }}</p>
+                <p><span class="font-semibold font-mono">Подтверждено:</span> {{ entity.is_approved ? 'Да' : 'Нет' }}</p>
+            </div>
             <NuxtLink to="/profile/add-entity" class="flex items-center justify-center gap-4 w-full py-6 bg-white rounded-xl shadow-lg transition-all duration-500 hover:opacity-60">
                 <Icon class="text-3xl" name="material-symbols:add-diamond-rounded"/>
                 <span>Добавить</span>
@@ -39,6 +50,7 @@
             <p class="text-2xl font-semibold font-mono">Вы пока ничего не опубликовали</p>
             <NuxtLink to="/profile/add-entity" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавьте оборудование</NuxtLink>
         </div>
+        {{ entities }}
     </div>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Выход из аккаунта</p>
@@ -184,7 +196,9 @@ const loadEntities = async() => {
     .from('technic')
     .select()
 
-    entities.value = data || []
+    if (data) {
+        entities.value = data
+    }
 }
 
 
