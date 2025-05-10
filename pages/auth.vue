@@ -32,7 +32,7 @@ const user = ref({
 
 /* создание сообщений и подключение хранилищ */
 const { showMessage } = useMessagesStore()
-const { login } = useUserStore()
+const { login, loadProfileData } = useUserStore()
 
 
 /* подключение БД и роутера */
@@ -65,6 +65,7 @@ const authUser = async() => {
     showMessage('Успешный вход!', true)
     login(users[0].id, users[0].role)
     isAuthDisabled.value = false
+    loadProfileData()
     router.push('/profile')
 } 
 </script>

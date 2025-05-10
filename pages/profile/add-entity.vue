@@ -15,7 +15,8 @@
                 <FormKit v-if="entityForm.type == 'Оборудование'" v-model="entityForm.version" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Версия" name="Версия" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
                 <FormKit v-model="entityForm.certificate" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Сертификат КТО" name="Сертификат КТО" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
             </div>
-            <FormKit v-model="entityForm.address" validation="required" messages-class="text-[#E9556D] font-mono" type="select" :options="[1,2,3]" placeholder="Место использования" name="Место использования" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+            <FormKit v-if="divisions" v-model="entityForm.address" validation="required" messages-class="text-[#E9556D] font-mono" type="select" :options="divisions" placeholder="Место использования" name="Место использования" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+            <p class="font-semibold text-xl max-w-xl text-center" v-else><span class="text-red-500">Ошибка:</span> нет подразделений. Добавьте подразделение в личном кабинете.</p>
             <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавить</button>
         </FormKit>
     </div>
@@ -65,4 +66,24 @@ const addEntity = async() => {
         isLoading.value = false
     }
 }
+
+
+/* получение подразделений */
+const divisions = ref([])
+const loadDivisions = async() => {
+    const { data, error } = await supabase
+    .from('divisions')
+    .select('address')
+    .eq('user_id', userId)
+
+    if (data) {
+        divisions.value = data.map(item => item.address)
+    }
+}
+
+
+/* первоначальная загрузка */
+onMounted(() => {
+    loadDivisions()
+})
 </script>

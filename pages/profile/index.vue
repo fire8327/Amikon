@@ -28,9 +28,31 @@
         </FormKit>
     </div>
     <div class="flex flex-col gap-6">
+        <p class="mainHeading">Подразделения</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="divisions && divisions.length > 0">
+            <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="division in divisions" :key="division.id">
+                <div class="flex items-center gap-2 self-end">
+                    <button type="button" @click="deleteEntity(division.id, 'divisions')" class="cursor-pointer">
+                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                    </button>
+                </div>
+                <p><span class="font-semibold font-mono">Id:</span> {{ division.id }}</p>
+                <p><span class="font-semibold font-mono">Адрес:</span> {{ division.address }}</p>
+            </div>
+            <NuxtLink to="/profile/add-division" class="flex items-center justify-center gap-4 w-full py-6 bg-white rounded-xl shadow-lg transition-all duration-500 hover:opacity-60">
+                <Icon class="text-3xl" name="material-symbols:add-diamond-rounded"/>
+                <span>Добавить</span>
+            </NuxtLink>
+        </div>
+        <div class="flex flex-col w-full items-center gap-4 text-center" v-else>
+            <p class="text-2xl font-semibold font-mono">Вы пока ничего не добавили</p>
+            <NuxtLink to="/profile/add-division" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавить подразделение</NuxtLink>
+        </div>
+    </div>
+    <div class="flex flex-col gap-6">
         <p class="mainHeading">Оборудование</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="entities && entities.length > 0">
-             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="entity.id">
+            <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="entity.id">
                 <div class="flex items-center gap-2 self-end">
                     <button type="button" @click="deleteEntity(entity.id, 'technic')" class="cursor-pointer">
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
@@ -48,7 +70,7 @@
         </div>
         <div class="flex flex-col w-full items-center gap-4 text-center" v-else>
             <p class="text-2xl font-semibold font-mono">Вы пока ничего не опубликовали</p>
-            <NuxtLink to="/profile/add-entity" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавьте оборудование</NuxtLink>
+            <NuxtLink to="/profile/add-entity" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавить оборудование</NuxtLink>
         </div>
     </div>
     <div class="flex flex-col gap-6">
@@ -194,9 +216,24 @@ const loadEntities = async() => {
     const { data, error } = await supabase
     .from('technic')
     .select()
+    .eq('user_id', userId)
 
     if (data) {
         entities.value = data
+    }
+}
+
+
+/* получение подразделений */
+const divisions = ref([])
+const loadDivisions = async() => {
+    const { data, error } = await supabase
+    .from('divisions')
+    .select()
+    .eq('user_id', userId)
+
+    if (data) {
+        divisions.value = data
     }
 }
 
@@ -211,6 +248,7 @@ const deleteEntity = async(entityId, table) => {
         if (error) throw error
         showMessage('Запись удалена!', true)
         await loadEntities()
+        await loadDivisions()
     } catch (error) {
         console.error('Ошибка обновления статуса вакансии:', error.message)
     }   
@@ -222,5 +260,6 @@ onMounted(async () => {
     loadProfileData()
     loadCompanies()
     loadEntities()
+    loadDivisions()
 })
 </script>
