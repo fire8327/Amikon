@@ -11,7 +11,7 @@
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                     </button>
                 </div>
-                <p><span class="font-semibold font-mono">Id:</span> {{ user.id }}</p>
+                <p class="mt-auto"><span class="font-semibold font-mono">Id:</span> {{ user.id }}</p>
                 <p><span class="font-semibold font-mono">Имя:</span> {{ user.surname }} {{ user.name }}</p>
                 <p><span class="font-semibold font-mono">Почта:</span> {{ user.email }}</p>
                 <p><span class="font-semibold font-mono">Телефон:</span> {{ user.phone }}</p>
@@ -19,6 +19,27 @@
             </div>
         </div>
         <p v-else class="text-2xl font-semibold text-center">Пользователей пока нет</p>
+    </div>
+    <div class="flex flex-col gap-6">
+        <p class="mainHeading">Подтверждение оборудования</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="technics && technics.length > 0">
+            <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="technic in technics" :key="technic.id">
+                <div class="flex items-center gap-2 self-end">
+                    <button type="button" v-if="technic.is_approved == false" @click="updateEntityStatus(technic.id, 'technic')" class="cursor-pointer">
+                        <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
+                    </button>
+                    <button type="button" @click="deleteEntity(technic.id, 'technic')" class="cursor-pointer">
+                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                    </button>
+                </div>
+                <p class="mt-auto"><span class="font-semibold font-mono">Id:</span> {{ technic.id }}</p>
+                <p><span class="font-semibold font-mono">Имя пользователя:</span> {{ technic.users.surname }} {{ technic.users.name }}</p>
+                <p><span class="font-semibold font-mono">Наименование:</span> {{ technic.name }}</p>
+                <p><span class="font-semibold font-mono">Тип:</span> {{ technic.type }}</p>
+                <p><span class="font-semibold font-mono">Подтверждено:</span> {{ technic.is_approved ? 'Да' : 'Нет' }}</p>
+            </div>
+        </div>
+        <p v-else class="text-2xl font-semibold text-center">Оборудования пока нет</p>
     </div>
 </template>
 
@@ -57,6 +78,23 @@ const fetchUsers = async () => {
 }
 
 
+/* получение пользователей */
+const technics = ref([])
+const fetchTechnics = async () => {
+    try {
+        const { data, error } = await supabase
+            .from('technic')
+            .select('*, users(*)')
+            .order('id', { ascending: true })
+
+        if (error) throw error
+        technics.value = data || []
+    } catch (error) {
+        console.error('Ошибка загрузки пользователей:', error.message)
+    }
+}
+
+
 /* обновление сущности */
 const updateEntityStatus = async(entityId, table) => {
     try {
@@ -67,7 +105,7 @@ const updateEntityStatus = async(entityId, table) => {
         if (error) throw error
         showMessage('Статус обновлён!', true)
         await fetchUsers()
-        // добавить ещё загрузку
+        await fetchTechnics()
     } catch (error) {
         console.error('Ошибка обновления статуса вакансии:', error.message)
     }    
@@ -84,7 +122,7 @@ const deleteEntity = async(entityId, table) => {
         if (error) throw error
         showMessage('Запись удалена!', true)
         await fetchUsers()
-        // добавить ещё загрузку
+        await fetchTechnics()
     } catch (error) {
         console.error('Ошибка обновления статуса вакансии:', error.message)
     }   
@@ -94,5 +132,6 @@ const deleteEntity = async(entityId, table) => {
 /* первоначальная загрузка */
 onMounted(() => {
     fetchUsers()
+    fetchTechnics()
 })
 </script>
