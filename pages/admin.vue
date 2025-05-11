@@ -20,7 +20,7 @@
                 <p><span class="font-semibold font-mono">Имя:</span> {{ user.surname }} {{ user.name }}</p>
                 <p><span class="font-semibold font-mono">Почта:</span> {{ user.email }}</p>
                 <p><span class="font-semibold font-mono">Телефон:</span> {{ user.phone }}</p>
-                <p><span class="font-semibold font-mono">Подтвержден:</span> {{ user.is_approved ? 'Да' : 'Нет' }}</p>
+                <p><span class="font-semibold font-mono">Подтверждён:</span> <span :class="user.is_approved ? 'text-green-500' : 'text-red-500'">{{ user.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
         </div>
         <p v-else class="text-2xl font-semibold text-center">Пользователей пока нет</p>
@@ -46,7 +46,8 @@
                 <p><span class="font-semibold font-mono">Имя пользователя:</span> {{ technic.users.surname }} {{ technic.users.name }}</p>
                 <p><span class="font-semibold font-mono">Наименование:</span> {{ technic.name }}</p>
                 <p><span class="font-semibold font-mono">Тип:</span> {{ technic.type }}</p>
-                <p><span class="font-semibold font-mono">Подтверждено:</span> {{ technic.is_approved ? 'Да' : 'Нет' }}</p>
+                <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="statusColor(technic.status)">{{ technic.status }}</span></p>
+                <p><span class="font-semibold font-mono">Подтверждено:</span> <span :class="technic.is_approved ? 'text-green-500' : 'text-red-500'">{{ technic.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
         </div>
         <p v-else class="text-2xl font-semibold text-center">Оборудования пока нет</p>
@@ -137,6 +138,23 @@ const deleteEntity = async(entityId, table) => {
         console.error('Ошибка обновления статуса вакансии:', error.message)
     }   
 }
+
+
+/* цвет состояния */
+const statusColor = ((status) => {
+    switch (status) {
+        case 'Отключено':
+            return 'bg-gray-500'    
+        case 'В работе':
+            return 'bg-green-500'    
+        case 'Сбой':
+            return 'bg-red-500'    
+        case 'Обслуживание':
+            return 'bg-yellow-500'    
+        default:
+            return 'bg-blue-500'
+    }
+})
 
 
 /* первоначальная загрузка */

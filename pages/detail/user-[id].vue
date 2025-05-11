@@ -14,7 +14,7 @@
         <p><span class="font-semibold font-mono">Телефон:</span> {{ user?.phone }}</p>
         <p><span class="font-semibold font-mono">Email:</span> {{ user?.email }}</p>
         <p><span class="font-semibold font-mono">Компания:</span> {{ user?.company }}</p>
-        <p><span class="font-semibold font-mono">Подтверждён:</span> {{ user?.approved ? 'Да' : 'Нет' }}</p>
+        <p><span class="font-semibold font-mono">Подтверждён:</span> <span :class="user?.is_approved ? 'text-green-500' : 'text-red-500'">{{ user?.is_approved ? 'Да' : 'Нет' }}</span></p>
       </div>
     </div>
 </template>

@@ -69,7 +69,8 @@
                 <p><span class="font-semibold font-mono">Id:</span> {{ entity.id }}</p>
                 <p><span class="font-semibold font-mono">Наименование:</span> {{ entity.name }}</p>
                 <p><span class="font-semibold font-mono">Тип:</span> {{ entity.type }}</p>
-                <p><span class="font-semibold font-mono">Подтверждено:</span> {{ entity.is_approved ? 'Да' : 'Нет' }}</p>
+                <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="statusColor(entity.status)">{{ entity.status }}</span></p>
+                <p><span class="font-semibold font-mono">Подтверждено:</span> <span :class="entity.is_approved ? 'text-green-500' : 'text-red-500'">{{ entity.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
             <NuxtLink to="/profile/add-entity" class="flex items-center justify-center gap-4 w-full py-6 bg-white rounded-xl shadow-lg transition-all duration-500 hover:opacity-60">
                 <Icon class="text-3xl" name="material-symbols:add-diamond-rounded"/>
@@ -261,6 +262,23 @@ const deleteEntity = async(entityId, table) => {
         console.error('Ошибка обновления статуса вакансии:', error.message)
     }   
 }
+
+
+/* цвет состояния */
+const statusColor = ((status) => {
+    switch (status) {
+        case 'Отключено':
+            return 'bg-gray-500'    
+        case 'В работе':
+            return 'bg-green-500'    
+        case 'Сбой':
+            return 'bg-red-500'    
+        case 'Обслуживание':
+            return 'bg-yellow-500'    
+        default:
+            return 'bg-blue-500'
+    }
+})
 
 
 /* первоначальная загрузка */

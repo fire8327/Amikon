@@ -15,7 +15,8 @@
         <p v-if="technic?.version"><span class="font-semibold font-mono">Версия:</span> {{ technic?.version }}</p>
         <p><span class="font-semibold font-mono">Сертификат КТО:</span> {{ technic?.certificate }}</p>
         <p><span class="font-semibold font-mono">Подразделение:</span> {{ technic?.address }}</p>
-        <p><span class="font-semibold font-mono">Подтверждено:</span> {{ technic?.approved ? 'Да' : 'Нет' }}</p>
+        <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="statusColor(technic?.status)">{{ technic?.status }}</span></p>
+        <p><span class="font-semibold font-mono">Подтверждено:</span> <span :class="technic?.is_approved ? 'text-green-500' : 'text-red-500'">{{ technic?.is_approved ? 'Да' : 'Нет' }}</span></p>
       </div>
     </div>
 </template>
@@ -53,6 +54,23 @@ const loadTechnic = async() => {
 
     if (data) technic.value = data 
 }
+
+
+/* цвет состояния */
+const statusColor = ((status) => {
+    switch (status) {
+        case 'Отключено':
+            return 'bg-gray-500'    
+        case 'В работе':
+            return 'bg-green-500'    
+        case 'Сбой':
+            return 'bg-red-500'    
+        case 'Обслуживание':
+            return 'bg-yellow-500'    
+        default:
+            return 'bg-blue-500'
+    }
+})
 
 
 /* первоначальная загрузка */
