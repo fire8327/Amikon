@@ -58,6 +58,9 @@
                         <Icon class="text-3xl text-violet-500" name="material-symbols:eye-tracking"/>
                     </NuxtLink>
                     <div class="flex items-center gap-2 self-end">
+                        <NuxtLink :to="`/edit/technic-${entity.id}`">
+                            <Icon class="text-3xl text-yellow-500" name="material-symbols:edit-rounded"/>
+                        </NuxtLink>
                         <button type="button" @click="deleteEntity(entity.id, 'technic')" class="cursor-pointer">
                             <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                         </button>
