@@ -3,13 +3,18 @@
         <p class="mainHeading">Подтверждение пользователей</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="users && users.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="user in users" :key="user.id">
-                <div class="flex items-center gap-2 self-end">
-                    <button type="button" v-if="user.is_approved == false" @click="updateEntityStatus(user.id, 'users')" class="cursor-pointer">
-                        <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
-                    </button>
-                    <button type="button" @click="deleteEntity(user.id, 'users')" class="cursor-pointer">
-                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
-                    </button>
+                <div class="flex items-center justify-between">
+                    <NuxtLink :to="`/detail/user-${user.id}`">
+                        <Icon class="text-3xl text-violet-500" name="material-symbols:eye-tracking"/>
+                    </NuxtLink>
+                    <div class="flex items-center gap-2">
+                        <button type="button" v-if="user.is_approved == false" @click="updateEntityStatus(user.id, 'users')" class="cursor-pointer">
+                            <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
+                        </button>
+                        <button type="button" @click="deleteEntity(user.id, 'users')" class="cursor-pointer">
+                            <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                        </button>
+                    </div>
                 </div>
                 <p class="mt-auto"><span class="font-semibold font-mono">Id:</span> {{ user.id }}</p>
                 <p><span class="font-semibold font-mono">Имя:</span> {{ user.surname }} {{ user.name }}</p>
@@ -24,13 +29,18 @@
         <p class="mainHeading">Подтверждение оборудования</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="technics && technics.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="technic in technics" :key="technic.id">
-                <div class="flex items-center gap-2 self-end">
-                    <button type="button" v-if="technic.is_approved == false" @click="updateEntityStatus(technic.id, 'technic')" class="cursor-pointer">
-                        <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
-                    </button>
-                    <button type="button" @click="deleteEntity(technic.id, 'technic')" class="cursor-pointer">
-                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
-                    </button>
+                <div class="flex items-center justify-between">
+                    <NuxtLink :to="`/detail/technic-${technic.id}`">
+                        <Icon class="text-3xl text-violet-500" name="material-symbols:eye-tracking"/>
+                    </NuxtLink>
+                    <div class="flex items-center gap-2">
+                        <button type="button" v-if="technic.is_approved == false" @click="updateEntityStatus(technic.id, 'technic')" class="cursor-pointer">
+                            <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
+                        </button>
+                        <button type="button" @click="deleteEntity(technic.id, 'technic')" class="cursor-pointer">
+                            <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                        </button>
+                    </div>
                 </div>
                 <p class="mt-auto"><span class="font-semibold font-mono">Id:</span> {{ technic.id }}</p>
                 <p><span class="font-semibold font-mono">Имя пользователя:</span> {{ technic.users.surname }} {{ technic.users.name }}</p>
