@@ -52,6 +52,33 @@
         </div>
         <p v-else class="text-2xl font-semibold text-center">Оборудования пока нет</p>
     </div>
+    <div class="flex flex-col gap-6">
+        <p class="mainHeading">Сбои</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="crashes && crashes.length > 0">
+            <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="crash in crashes" :key="crash.id">
+                <div class="flex items-center justify-between">
+                    <NuxtLink :to="`/detail/crash-${crash.id}`">
+                        <Icon class="text-3xl text-violet-500" name="material-symbols:eye-tracking"/>
+                    </NuxtLink>
+                    <div class="flex items-center gap-2">
+                        <!-- <button type="button" v-if="technic.is_approved == false" @click="updateEntityStatus(technic.id, 'technic')" class="cursor-pointer">
+                            <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
+                        </button> -->
+                        <button type="button" @click="deleteEntity(crash.id, 'crashes')" class="cursor-pointer">
+                            <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                        </button>
+                    </div>
+                </div>
+                <p class="mt-auto"><span class="font-semibold font-mono">Id:</span> {{ crash.id }}</p>
+                <p><span class="font-semibold font-mono">Компания:</span> {{ crash.users.company }}</p>
+                <p><span class="font-semibold font-mono">Имя пользователя:</span> {{ crash.users.surname }} {{ crash.users.name }}</p>
+                <p><span class="font-semibold font-mono">Email:</span> {{ crash.users.email }}</p>
+                <p><span class="font-semibold font-mono">Сертификат:</span> {{ crash.technic.certificate }}</p>
+                <p class="line-clamp-2"><span class="font-semibold font-mono">Описание проблемы:</span> {{ crash.desc }}</p>
+            </div>
+        </div>
+        <p v-else class="text-2xl font-semibold text-center">Сбоев пока нет</p>
+    </div>
 </template>
 
 <script setup>
@@ -89,7 +116,7 @@ const fetchUsers = async () => {
 }
 
 
-/* получение пользователей */
+/* получение оборудования */
 const technics = ref([])
 const fetchTechnics = async () => {
     try {
@@ -101,7 +128,24 @@ const fetchTechnics = async () => {
         if (error) throw error
         technics.value = data || []
     } catch (error) {
-        console.error('Ошибка загрузки пользователей:', error.message)
+        console.error('Ошибка загрузки оборудования:', error.message)
+    }
+}
+
+
+/* получение сбоев */
+const crashes = ref([])
+const fetchCrashes = async () => {
+    try {
+        const { data, error } = await supabase
+            .from('crashes')
+            .select('*, users(*), technic(*)')
+            .order('id', { ascending: true })
+
+        if (error) throw error
+        crashes.value = data || []
+    } catch (error) {
+        console.error('Ошибка загрузки сбоев:', error.message)
     }
 }
 
@@ -118,7 +162,7 @@ const updateEntityStatus = async(entityId, table) => {
         await fetchUsers()
         await fetchTechnics()
     } catch (error) {
-        console.error('Ошибка обновления статуса вакансии:', error.message)
+        console.error('Ошибка обновления статуса:', error.message)
     }    
 }
 
@@ -134,8 +178,9 @@ const deleteEntity = async(entityId, table) => {
         showMessage('Запись удалена!', true)
         await fetchUsers()
         await fetchTechnics()
+        await fetchCrashes()
     } catch (error) {
-        console.error('Ошибка обновления статуса вакансии:', error.message)
+        console.error('Ошибка обновления статуса:', error.message)
     }   
 }
 
@@ -161,5 +206,6 @@ const statusColor = ((status) => {
 onMounted(() => {
     fetchUsers()
     fetchTechnics()
+    fetchCrashes()
 })
 </script>
