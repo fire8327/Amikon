@@ -31,7 +31,6 @@
     </button>
     <p class="text-center text-2xl font-semibold">Заполните анкету</p>
     <FormKit @submit="addCrash" type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-6 items-center justify-center grow">
-        <FormKit v-model="crashForm.contacts" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон\Email" name="Контактные данные" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
         <FormKit v-model="crashForm.desc" validation="required" messages-class="text-[#E9556D] font-mono" type="textarea" placeholder="Опишите вашу проблему" name="Описание проблемы" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
         <div class="flex flex-wrap gap-1">
           <p>Вы также можете оставить заявку в ручную на почте</p>
@@ -80,7 +79,6 @@ const isConsultationShow = ref(false) // консультация
 const isCrashShow = ref(false) // cбой
 
 const crashForm = ref({
-  contacts: "",
   desc: "",
   user_id: userId,
   technic_id: route.params.id
