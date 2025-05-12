@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-6">
-        <p class="mainHeading">Неподтверждённые пользователи</p>
+        <p class="mainHeading">Подтверждение пользователей</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="unapprovedUsers && unapprovedUsers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="user in unapprovedUsers">
                 <div class="flex items-center justify-between">
@@ -53,7 +53,7 @@
         <p v-else class="text-2xl font-semibold text-center">Оборудования пока нет</p>
     </div>
     <div class="flex flex-col gap-6">
-        <p class="mainHeading">Подтверждённые пользователи</p>
+        <p class="mainHeading">Управление подтверждёнными пользователями</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="approvedUsers && approvedUsers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="user in approvedUsers">
                 <div class="flex items-center justify-between">
