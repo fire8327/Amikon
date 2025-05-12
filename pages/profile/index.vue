@@ -177,6 +177,8 @@ const saveProfile = async () => {
             userForm.value.image = fileName
         }
 
+        userForm.value.is_approved = false
+
         const { error } = await supabase
         .from('users')
         .update(userForm.value)
