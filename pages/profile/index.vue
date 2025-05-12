@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Личные данные</p>
-        <FormKit @submit="saveProfile" type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-6 items-center justify-center grow">
+        <FormKit type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-6 items-center justify-center grow">
             <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
                 <FormKit v-model="userForm.surname" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Фамилия" name="Фамилия" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
                 <FormKit v-model="userForm.name" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Имя" name="Имя" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <FormKit v-else @change="(e) => { logoFile = e.target.files[0] }" accept="image/*" validation="required" messages-class="text-[#E9556D] font-mono" type="file" label="Фото профиля" name="Фото профиля" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
-            <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Сохранить</button>
+            <button @click="handleSave" :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="button" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Сохранить</button>
         </FormKit>
     </div>
     <div class="flex flex-col gap-6">
@@ -194,6 +194,22 @@ const saveProfile = async () => {
     } finally {
         isLoading.value = false
     }
+}
+
+
+/* подтверждение сохранения */
+const saveClickCount = ref(0)
+
+const handleSave = () => {
+  saveClickCount.value++
+  
+  if (saveClickCount.value === 1) {
+    showMessage('Нажмите еще раз для подтверждения', true)
+    setTimeout(() => saveClickCount.value = 0, 5000)
+  } else if (saveClickCount.value >= 2) {
+    saveClickCount.value = 0
+    saveProfile()
+  }
 }
 
 
