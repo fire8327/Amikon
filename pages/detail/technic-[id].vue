@@ -6,7 +6,7 @@
     </div>
     <div class="flex items-center gap-6">
       <button @click="isConsultationShow = true, isOverlayShow = true" class="py-1.5 px-4 rounded-xl text-white border border-yellow-500 bg-yellow-500 transition-all duration-500 hover:text-yellow-500 hover:bg-transparent">Запросить консультацию по устройству</button>
-      <button @click="isCrashShow = true, isOverlayShow = true" class="py-1.5 px-4 rounded-xl text-white border border-red-500 bg-red-500 transition-all duration-500 hover:text-red-500 hover:bg-transparent">Сообщить о критическом сбое</button>
+      <button v-if="authenticated && role === 'user'" @click="isCrashShow = true, isOverlayShow = true" class="py-1.5 px-4 rounded-xl text-white border border-red-500 bg-red-500 transition-all duration-500 hover:text-red-500 hover:bg-transparent">Сообщить о критическом сбое</button>
     </div>
   </div>
 
@@ -70,7 +70,7 @@ const { showMessage } = useMessagesStore()
 
 
 /* получение пользоватея */
-const { id: userId, role } = useUserStore()
+const { id: userId, role, authenticated } = useUserStore()
 
 
 /* сбои и консультации */
