@@ -5,7 +5,7 @@
     </div>
     <div class="relative">
       <img src="/images/crash/main.jpg" alt="" class="w-3/4 mx-auto rounded-xl border border-violet-300 shadow-[0px_0px_13px_-7px_black]">
-      <div class="flex flex-col gap-6 p-4 rounded-xl bg-white shadow-[0px_0px_13px_-7px_black] h-fit w-1/2 absolute left-1/2 -translate-x-1/2 bottom-0">
+      <div class="flex flex-col gap-6 p-4 rounded-xl bg-white shadow-[0px_0px_13px_-7px_black] w-1/2 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 max-h-[40vh] overflow-y-auto">
         <p><span class="font-semibold font-mono">Id:</span> {{ crash?.id }}</p>
         <p><span class="font-semibold font-mono">Компания:</span> {{ crash?.users.company }}</p>
         <p><span class="font-semibold font-mono">Имя пользователя:</span> {{ crash?.users.surname }} {{ crash?.users.name }}</p>

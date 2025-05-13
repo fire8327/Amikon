@@ -5,7 +5,7 @@
     </div>
     <div class="relative">
       <img src="/images/user/main.jpg" alt="" class="w-3/4 mx-auto rounded-xl border border-violet-300 shadow-[0px_0px_13px_-7px_black]">
-      <div class="flex flex-col gap-6 p-4 rounded-xl bg-white shadow-[0px_0px_13px_-7px_black] h-fit w-1/2 absolute left-1/2 -translate-x-1/2 bottom-0">
+      <div class="flex flex-col gap-6 p-4 rounded-xl bg-white shadow-[0px_0px_13px_-7px_black] w-1/2 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 max-h-[40vh] overflow-y-auto">
         <p><span class="font-semibold font-mono">Id:</span> {{ user?.id }}</p>
         <div class="flex items-center gap-2">
           <img :src="getLogoUrl(user?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
