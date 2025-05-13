@@ -29,6 +29,7 @@
             <div class="flex items-center gap-2">
                 <NuxtLink to="/auth" class="flex items-center gap-2 transition-all duration-500 hover:opacity-70">
                     <Icon v-if="!userStore.authenticated" class="text-3xl text-violet-500" name="material-symbols:account-circle-outline"/>
+                    <span v-if="!userStore.authenticated">Войти</span>
                     <img v-if="userStore.authenticated" :src="getLogoUrl(userStore?.userData?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
                     <span v-if="userStore.authenticated">{{ userStore?.userData?.surname }} {{ userStore?.userData?.name }}</span>
                 </NuxtLink>

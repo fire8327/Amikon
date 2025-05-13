@@ -166,7 +166,7 @@ const statusColor = ((status) => {
 
 
 /* заметка */
-const userNote = ref()
+const userNote = ref("")
 let saveTimeout = null
 
 
