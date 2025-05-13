@@ -79,14 +79,15 @@
         <p class="mainHeading">Сбои</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="crashes && crashes.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="crash in crashes" :key="crash.id">
+                <FormKit @submit="changeCrashStatus(crash.id, $event.status)" type="form" :actions="false" messages-class="hidden" form-class="flex gap-4 items-center">
+                    <FormKit :value="crash.status" :options="['Новый','В работе','Закрыт']" validation="required" messages-class="text-[#E9556D] font-mono" type="select" placeholder="Статус" name="status" outer-class="grow" input-class="focus:outline-none px-4 py-1.5 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+                    <button type="sumbit" class="px-4 py-1.5 border border-violet-500 bg-violet-500 text-white rounded-full w-fit text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Сохранить</button>
+                </FormKit>
                 <div class="flex items-center justify-between">
                     <NuxtLink :to="`/detail/crash-${crash.id}`">
                         <Icon class="text-3xl text-violet-500" name="material-symbols:eye-tracking"/>
                     </NuxtLink>
                     <div class="flex items-center gap-2">
-                        <!-- <button type="button" v-if="technic.is_approved == false" @click="updateEntityStatus(technic.id, 'technic')" class="cursor-pointer">
-                            <Icon class="text-3xl text-green-500" name="material-symbols:check-rounded"/>
-                        </button> -->
                         <button type="button" @click="deleteEntity(crash.id, 'crashes')" class="cursor-pointer">
                             <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                         </button>
@@ -98,6 +99,7 @@
                 <p><span class="font-semibold font-mono">Email:</span> {{ crash.users.email }}</p>
                 <p><span class="font-semibold font-mono">Сертификат:</span> {{ crash.technic.certificate }}</p>
                 <p class="line-clamp-2"><span class="font-semibold font-mono">Описание проблемы:</span> {{ crash.desc }}</p>
+                <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="crashStatusColor(crash.status)">{{ crash.status }}</span></p>
             </div>
         </div>
         <p v-else class="text-2xl font-semibold text-center">Сбоев пока нет</p>
@@ -228,6 +230,37 @@ const statusColor = ((status) => {
             return 'bg-blue-500'
     }
 })
+
+// для сбоев
+const crashStatusColor = ((status) => {
+    switch (status) {
+        case 'Новый':
+            return 'bg-gray-500'    
+        case 'Закрыт':
+            return 'bg-green-500'        
+        case 'В работе':
+            return 'bg-yellow-500'    
+        default:
+            return 'bg-blue-500'
+    }
+})
+
+
+/* изменение статуса сбоя */
+const changeCrashStatus = async(crashId, status) => {
+    const { data, error } = await supabase
+    .from('crashes')
+    .update({ status: status })
+    .eq('id', crashId)
+    .select()
+
+    if(data) {
+        showMessage('Статус обновлён!', true)
+        fetchCrashes()
+    } else {
+        showMessage('Ошибка при изменении статуса!', false)
+    }
+}
 
 
 /* первоначальная загрузка */
