@@ -24,7 +24,7 @@
                 <p><span class="font-semibold font-mono">Подтверждён:</span> <span :class="user.is_approved ? 'text-green-500' : 'text-red-500'">{{ user.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
         </div>
-        <p v-else class="text-2xl font-semibold text-center">Пользователей для подтверждения пока нет</p>
+        <p v-else class="text-2xl font-semibold text-center">Пользователи для подтверждения не найдены</p>
     </div>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Управление подтверждёнными пользователями</p>
@@ -47,7 +47,7 @@
                 <p><span class="font-semibold font-mono">Подтверждён:</span> <span :class="user.is_approved ? 'text-green-500' : 'text-red-500'">{{ user.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
         </div>
-        <p v-else class="text-2xl font-semibold text-center">Пользователей пока нет</p>
+        <p v-else class="text-2xl font-semibold text-center">Пользователи не найдены</p>
     </div>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Подтверждение оборудования</p>
@@ -74,7 +74,7 @@
                 <p><span class="font-semibold font-mono">Подтверждено:</span> <span :class="technic.is_approved ? 'text-green-500' : 'text-red-500'">{{ technic.is_approved ? 'Да' : 'Нет' }}</span></p>
             </div>
         </div>
-        <p v-else class="text-2xl font-semibold text-center">Оборудования пока нет</p>
+        <p v-else class="text-2xl font-semibold text-center">Оборудование не найдено</p>
     </div>
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Сбои</p>
@@ -103,7 +103,7 @@
                 <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="crashStatusColor(crash.status)">{{ crash.status }}</span></p>
             </div>
         </div>
-        <p v-else class="text-2xl font-semibold text-center">Сбоев пока нет</p>
+        <p v-else class="text-2xl font-semibold text-center">Сбои не найдены</p>
     </div>
 </template>
 
