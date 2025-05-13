@@ -59,6 +59,11 @@
       <p><span class="font-semibold font-mono">Подразделение:</span> {{ technic?.address }}</p>
       <p><span class="font-semibold font-mono">Состояние:</span> <span class="px-4 py-1.5 rounded-xl text-white" :class="statusColor(technic?.status)">{{ technic?.status }}</span></p>
       <p><span class="font-semibold font-mono">Подтверждено:</span> <span :class="technic?.is_approved ? 'text-green-500' : 'text-red-500'">{{ technic?.is_approved ? 'Да' : 'Нет' }}</span></p>
+      <div class="flex flex-col" v-if="authenticated && role === 'user'">
+        <FormKit v-model="userNote" validation="required|length:3,250" messages-class="text-[#E9556D] font-mono" type="textarea" placeholder="Введите заметку" label="Заметка" name="Заметка" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+        <p class="text-sm text-gray-500">*Автоматически сохранится через 3 секунды после изменения</p>
+      </div>
+      <p v-else><span class="font-semibold font-mono">Заметка:</span> {{ technic?.note }}</p>
     </div>
   </div>
 </template>
@@ -136,7 +141,10 @@ const loadTechnic = async() => {
 
     if (error) throw error
 
-    if (data) technic.value = data 
+    if (data) {
+      technic.value = data 
+      userNote.value = data.note
+    }  
 }
 
 
@@ -157,8 +165,48 @@ const statusColor = ((status) => {
 })
 
 
+/* заметка */
+const userNote = ref()
+let saveTimeout = null
+
+
+/* сохранение заметки */
+const saveNote = async (noteContent) => {
+  if(noteContent && noteContent.length >= 3 && noteContent.length <=250) {
+    const { data, error } = await supabase
+      .from('technic')
+      .update({ note: noteContent })
+      .eq('id', route.params.id)
+      .select()
+    
+    if (data) {
+      console.log(data)
+      showMessage('Заметка обновлена!', true)
+    } else {
+      console.log(error)    
+      showMessage('Произошла ошибка!', false)
+    }  
+  }
+}
+
+// отправка
+watch(userNote, (newValue) => {
+  clearTimeout(saveTimeout)
+
+  saveTimeout = setTimeout(() => {
+    saveNote(newValue)
+  }, 3000)
+})
+
+
 /* первоначальная загрузка */
 onMounted(() => {
   loadTechnic()
+})
+
+
+/* размонтирование компонента */
+onUnmounted(() => {
+  clearTimeout(saveTimeout)
 })
 </script>

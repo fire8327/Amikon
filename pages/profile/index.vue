@@ -27,7 +27,7 @@
             <button @click="handleSave" :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="button" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Сохранить</button>
         </FormKit>
     </div>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6" v-if="role === 'user'">
         <p class="mainHeading">Подразделения</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="divisions && divisions.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="division in divisions" :key="division.id">
@@ -49,7 +49,7 @@
             <NuxtLink to="/profile/add-division" class="px-4 py-2 border border-violet-500 bg-violet-500 text-white rounded-full text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent">Добавить подразделение</NuxtLink>
         </div>
     </div>
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6" v-if="role === 'user'">
         <p class="mainHeading">Оборудование</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="entities && entities.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="entity in entities" :key="entity.id">
