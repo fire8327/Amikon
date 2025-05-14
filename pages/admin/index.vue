@@ -55,7 +55,10 @@
         <p v-else class="text-2xl font-semibold text-center">Пользователи не найдены</p>
     </div>
     <div v-if="!isLoading" class="flex flex-col gap-6">
-        <p class="mainHeading">Подтверждение оборудования</p>
+        <div class="flex items-center justify-between">
+            <p class="mainHeading">Подтверждение оборудования</p>
+            <FormKit v-model="filterTerm" messages-class="text-[#E9556D] font-mono" type="select" :options="['Все', 'Подтверждено', 'Не подтверждено']" placeholder="Статус" name="Статус" outer-class="w-fit" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="technics && technics.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="technic in technics" :key="technic.id">
                 <div class="flex items-center justify-between">
@@ -169,6 +172,12 @@ const fetchTechnics = async (searchTerm = '') => {
             .from('technic')
             .select('*,  users(*)')
             .order('id', { ascending: true })
+
+        // добавляем фильтрацию по статусу подтверждения
+        if (filterTerm.value !== "Все") {
+            const isApproved = filterTerm.value === "Подтверждено"
+            query = query.eq('is_approved', isApproved)
+        }
 
         if (searchTerm) {
             // сначала ищем пользователей
@@ -326,25 +335,28 @@ const searchTerm = ref("")
 let timeoutId = null
 const isLoading = ref(false)
 
+
+/* фильтрация */
+const filterTerm = ref("Все")
+
 // отслеживание изменений
-watch(searchTerm, async (newVal) => {
+watch([searchTerm, filterTerm], async ([newSearchVal, newFilterVal]) => {
   clearTimeout(timeoutId)
   timeoutId = setTimeout(async () => {
     isLoading.value = true
     try {
       await Promise.all([
-        fetchUsers(newVal),
-        fetchTechnics(newVal),
-        fetchCrashes(newVal)
+        fetchUsers(newSearchVal),
+        fetchTechnics(newSearchVal),
+        fetchCrashes(newSearchVal)
       ])
     } finally {
-      // задержка + CSS-анимация дадут идеально плавное исчезновение
       setTimeout(() => {
         isLoading.value = false
       }, 500)
     }
   }, 300)
-})
+}, { deep: true })
 
 
 /* первоначальная загрузка */
