@@ -1,6 +1,11 @@
 <template>
     <NuxtLink to="/admin/add-user" class="px-6 py-1.5 border border-violet-500 bg-violet-500 text-white rounded-full w-fit text-center transition-all duration-500 hover:text-violet-500 hover:bg-transparent ml-auto">Добавить пользователя</NuxtLink>
-    <div class="flex flex-col gap-6">
+    <FormKit v-model="searchTerm" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Поиск" name="Поиск" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-violet-500 shadow-md"/>
+    <div v-if="isLoading" class="h-[60vh] flex items-center justify-center gap-4 loading-indicator">
+        <p class="text-2xl font-semibold">Загрузка...</p>
+        <Icon class="text-3xl text-violet-500" name="line-md:loading-twotone-loop"/>
+    </div>
+    <div v-if="!isLoading" class="flex flex-col gap-6">
         <p class="mainHeading">Подтверждение пользователей</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="unapprovedUsers && unapprovedUsers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="user in unapprovedUsers">
@@ -26,7 +31,7 @@
         </div>
         <p v-else class="text-2xl font-semibold text-center">Пользователи для подтверждения не найдены</p>
     </div>
-    <div class="flex flex-col gap-6">
+    <div v-if="!isLoading" class="flex flex-col gap-6">
         <p class="mainHeading">Управление подтверждёнными пользователями</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="approvedUsers && approvedUsers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="user in approvedUsers">
@@ -49,7 +54,7 @@
         </div>
         <p v-else class="text-2xl font-semibold text-center">Пользователи не найдены</p>
     </div>
-    <div class="flex flex-col gap-6">
+    <div v-if="!isLoading" class="flex flex-col gap-6">
         <p class="mainHeading">Подтверждение оборудования</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="technics && technics.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="technic in technics" :key="technic.id">
@@ -76,7 +81,7 @@
         </div>
         <p v-else class="text-2xl font-semibold text-center">Оборудование не найдено</p>
     </div>
-    <div class="flex flex-col gap-6">
+    <div v-if="!isLoading" class="flex flex-col gap-6">
         <p class="mainHeading">Сбои</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="crashes && crashes.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="crash in crashes" :key="crash.id">
@@ -128,13 +133,22 @@ const { id: userId, role } = userStore
 /* получение пользователей */
 const approvedUsers = ref([])
 const unapprovedUsers = ref([])
-const fetchUsers = async () => {
+const fetchUsers = async (searchTerm = '') => {
     try {
-        const { data, error } = await supabase
+        let query = supabase
             .from('users')
             .select()
             .order('id', { ascending: true })
             .eq('role', 'user')
+
+        if (searchTerm) {
+            query = query.or(
+                `name.ilike.%${searchTerm}%,surname.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`
+            )
+        }    
+
+        const { data, error } = await query
+
         if (error) throw error
        
         if (data) {
@@ -149,12 +163,28 @@ const fetchUsers = async () => {
 
 /* получение оборудования */
 const technics = ref([])
-const fetchTechnics = async () => {
+const fetchTechnics = async (searchTerm = '') => {
     try {
-        const { data, error } = await supabase
+        let query = supabase
             .from('technic')
-            .select('*, users(*)')
+            .select('*,  users(*)')
             .order('id', { ascending: true })
+
+        if (searchTerm) {
+            // сначала ищем пользователей
+            const { data: users } = await supabase
+                .from('users')
+                .select('id')
+                .or(`name.ilike.%${searchTerm}%,surname.ilike.%${searchTerm}%`)
+
+            const userIds = users?.map(u => u.id) || []
+
+            query = query.or(
+                `name.ilike.%${searchTerm}%,type.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%,user_id.in.(${userIds.join(',')})`
+            )
+        }
+        
+        const { data, error } = await query
 
         if (error) throw error
         technics.value = data || []
@@ -166,12 +196,39 @@ const fetchTechnics = async () => {
 
 /* получение сбоев */
 const crashes = ref([])
-const fetchCrashes = async () => {
+const fetchCrashes = async (searchTerm = '') => {
     try {
-        const { data, error } = await supabase
+        let query = supabase
             .from('crashes')
             .select('*, users(*), technic(*)')
             .order('id', { ascending: true })
+
+        if (searchTerm) {
+            // сначала ищем пользователей
+            const { data: users } = await supabase
+                .from('users')
+                .select('id')
+                .or(`name.ilike.%${searchTerm}%,surname.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
+
+            const userIds = users?.map(u => u.id) || []
+
+            // сначала ищем оборудование
+            const { data: technic } = await supabase
+                .from('technic')
+                .select('id')
+                .or(`certificate.ilike.%${searchTerm}%`)
+
+            const technicIds = technic?.map(t => t.id) || []
+
+            console.log(technicIds)            
+
+            // объединение запросов
+            query = query.or(
+                `desc.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%,user_id.in.(${userIds.join(',')}),technic_id.in.(${technicIds.join(',')})`
+            )
+        }    
+
+        const { data, error } = await query
 
         if (error) throw error
         crashes.value = data || []
@@ -264,10 +321,41 @@ const changeCrashStatus = async(crashId, status) => {
 }
 
 
+/* поиск */
+const searchTerm = ref("")
+let timeoutId = null
+const isLoading = ref(false)
+
+// отслеживание изменений
+watch(searchTerm, async (newVal) => {
+  clearTimeout(timeoutId)
+  timeoutId = setTimeout(async () => {
+    isLoading.value = true
+    try {
+      await Promise.all([
+        fetchUsers(newVal),
+        fetchTechnics(newVal),
+        fetchCrashes(newVal)
+      ])
+    } finally {
+      // задержка + CSS-анимация дадут идеально плавное исчезновение
+      setTimeout(() => {
+        isLoading.value = false
+      }, 500)
+    }
+  }, 300)
+})
+
+
 /* первоначальная загрузка */
 onMounted(() => {
     fetchUsers()
     fetchTechnics()
     fetchCrashes()
+})
+
+/* размонтирование компонента */
+onUnmounted(() => {
+    clearTimeout(timeoutId)
 })
 </script>
