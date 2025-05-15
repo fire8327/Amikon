@@ -25,9 +25,13 @@
                     <span>о компании</span>
                     <Icon class="text-[8px] text-violet-500" name="carbon:triangle-down-solid"/>
                 </NuxtLink>
+                <NuxtLink v-if="userStore.authenticated && userStore.role === 'admin'" to="/admin" class="flex items-center gap-2 relative after:w-0 after:h-[2px] after:bg-violet-500 after:rounded-full after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:transition-all after:duration-500 hover:after:w-full">
+                    <span>Админ-панель</span>
+                    <Icon class="text-[8px] text-violet-500" name="carbon:triangle-down-solid"/>
+                </NuxtLink>
             </div>
             <div class="flex items-center gap-2">
-                <NuxtLink to="/auth" class="flex items-center gap-2 transition-all duration-500 hover:opacity-70">
+                <NuxtLink :to="userStore.authenticated ? '/profile' : '/auth'" class="flex items-center gap-2 transition-all duration-500 hover:opacity-70">
                     <Icon v-if="!userStore.authenticated" class="text-3xl text-violet-500" name="material-symbols:account-circle-outline"/>
                     <span v-if="!userStore.authenticated">Войти</span>
                     <img v-if="userStore.authenticated" :src="getLogoUrl(userStore?.userData?.image)" alt="" class="object-cover object-center aspect-square w-8 rounded-full">
@@ -50,7 +54,7 @@ const { messageTitle, messageType } = storeToRefs(useMessagesStore())
 /* проверка роли и бд */
 const supabase = useSupabaseClient()
 const userStore = useUserStore()
-const { id:userId, role } = useUserStore()
+const { id:userId, role, authenticated } = useUserStore()
 
 
 /* получение логотипа */

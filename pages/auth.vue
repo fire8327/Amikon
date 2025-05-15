@@ -66,6 +66,12 @@ const authUser = async() => {
     login(users[0].id, users[0].role)
     isAuthDisabled.value = false
     loadProfileData()
-    router.push('/profile')
+
+    if(users[0].role === 'user') {
+        router.push('/profile')
+    }
+    if(users[0].role === 'admin') {
+        router.push('/admin')
+    }
 } 
 </script>

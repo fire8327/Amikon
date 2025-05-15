@@ -1,29 +1,52 @@
-// Массив маршрутов
-const routesRequiringAuth = [
-    '/profile'
-]
-const routesNotRequiringAuth = [
+const appRoutes = {
+  public: [
     '/auth',
     '/reg'
-]
+  ],
+  protected: [
+    '/profile'
+  ],
+  admin: [
+    '/admin',
+    '/admin/add-user'
+  ]
+}
 
+export default defineNuxtRouteMiddleware(async (to) => {
+  const userStore = useUserStore()
+  const { authenticated, role } = userStore
+  const path = to.path
 
-// Middleware для проверки аутентификации пользователя
-export default defineNuxtRouteMiddleware((to) => {
-    const userStore = useUserStore()
-    const isAuthenticated = userStore.authenticated
+  // Главная страница
+  if (path === '/') {
+    return authenticated 
+      ? navigateTo(role === 'admin' ? '/admin' : '/profile')
+      : navigateTo('/auth')
+  }
 
-    // Проверка наличия требования аутентификации для текущего маршрута
-    const requiresAuth = routesRequiringAuth.includes(to.path)
-    const notRequiresAuth = routesNotRequiringAuth.includes(to.path)
+  // Публичные маршруты
+  if (appRoutes.public.some(route => path.startsWith(route))) {
+    return authenticated ? navigateToDefault(role) : undefined
+  }
 
-    // Если маршрут требует аутентификации, но пользователь не аутентифицирован, перенаправляем на /auth
-    if (requiresAuth && !isAuthenticated) {
-        return navigateTo('/auth')
-    }
+  // Защищенные маршруты (доступны всем авторизованным)
+  if (appRoutes.protected.some(route => path.startsWith(route))) {
+    return authenticated ? undefined : navigateTo('/auth')
+  }
 
-    // Если маршрут не требует аутентификации, но пользователь аутентифицирован, перенаправляем на /profile
-    if (notRequiresAuth && isAuthenticated) {
-        return navigateTo('/profile')
-    }
+  // Админские маршруты
+  if (appRoutes.admin.some(route => path.startsWith(route))) {
+    if (!authenticated) return navigateTo('/auth')
+    return role === 'admin' ? undefined : navigateTo('/profile')
+  }
+
+  // Для всех неопределенных маршрутов
+  return authenticated 
+    ? navigateToDefault(role)
+    : navigateTo('/auth')
 })
+
+// Помощник для редиректа по умолчанию
+function navigateToDefault(role) {
+  return navigateTo(role === 'admin' ? '/admin' : '/profile')
+}
