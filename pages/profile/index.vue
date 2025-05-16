@@ -148,6 +148,7 @@ const loadCompanies = async() => {
     .select('name')
 
     companies.value = data.map(item => item.name) || []
+    companies.value.push('Амикон')
 }
 
 
