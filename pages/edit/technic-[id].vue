@@ -24,6 +24,13 @@
 </template>
 
 <script setup>
+/* название и язык страницы */
+useSeoMeta({
+    title: 'Изменение оборудования',
+    lang: 'ru'
+})
+
+
 /* проверка роли и создание сообщений */
 const { id:userId, role } = useUserStore()
 const { showMessage } = useMessagesStore()

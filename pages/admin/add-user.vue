@@ -22,6 +22,13 @@
 </template>
 
 <script setup>
+/* название и язык страницы */
+useSeoMeta({
+    title: 'Добавление пользователя',
+    lang: 'ru'
+})
+
+
 /* подключение сообщений */
 const { showMessage } = useMessagesStore()
 

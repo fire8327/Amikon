@@ -20,6 +20,13 @@
 </template>
 
 <script setup>
+/* название и язык страницы */
+useSeoMeta({
+    title: 'Просмотр пользователя',
+    lang: 'ru'
+})
+
+
 /* подключение роута */
 const route = useRoute()
 

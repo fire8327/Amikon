@@ -19,6 +19,13 @@
 </template>
 
 <script setup>
+/* название и язык страницы */
+useSeoMeta({
+    title: 'Просмотр сбоя',
+    lang: 'ru'
+})
+
+
 /* подключение роута */
 const route = useRoute()
 

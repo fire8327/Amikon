@@ -69,6 +69,13 @@
 </template>
 
 <script setup>
+/* название и язык страницы */
+useSeoMeta({
+    title: 'Просмотр оборудования',
+    lang: 'ru'
+})
+
+
 /* подключение роута и сообщения*/
 const route = useRoute()
 const { showMessage } = useMessagesStore()
