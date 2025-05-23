@@ -29,24 +29,16 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return authenticated ? navigateToDefault(role) : undefined
   }
 
-  // Защищенные маршруты (доступны всем авторизованным)
-  if (appRoutes.protected.some(route => path.startsWith(route))) {
-    return authenticated ? undefined : navigateTo('/auth')
-  }
-
   // Админские маршруты
   if (appRoutes.admin.some(route => path.startsWith(route))) {
     if (!authenticated) return navigateTo('/auth')
     return role === 'admin' ? undefined : navigateTo('/profile')
   }
 
-  // Для всех неопределенных маршрутов
-  return authenticated 
-    ? navigateToDefault(role)
-    : navigateTo('/auth')
-})
+  // Все остальные маршруты доступны авторизованным
+  if (!authenticated) {
+    return navigateTo('/auth')
+  }
 
-// Помощник для редиректа по умолчанию
-function navigateToDefault(role) {
-  return navigateTo(role === 'admin' ? '/admin' : '/profile')
-}
+  return undefined
+})
